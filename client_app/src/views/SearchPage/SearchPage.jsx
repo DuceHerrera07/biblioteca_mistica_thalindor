@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Pagination } from 'react-bootstrap';
 
-const fakeBooks = Array.from({ length: 50 }).map((_, idx) => ({
+const fakeBooks = Array.from({ length: 150 }).map((_, idx) => ({
   id: idx + 1,
   title: `Libro ${idx + 1}`,
   author: `Autor ${idx + 1}`,
@@ -10,7 +10,7 @@ const fakeBooks = Array.from({ length: 50 }).map((_, idx) => ({
 
 function SearchPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 8;
+  const booksPerPage = 52;
 
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
@@ -32,6 +32,30 @@ function SearchPage() {
             <i className="bi bi-heart mx-2"></i>
             <i className="bi bi-person-circle mx-2"></i>
           </div>
+        </Col>
+      </Row>
+      <Row className="justify-content-between align-items-center">
+        <Col md={6}>
+          <Pagination>
+            <Pagination.Prev
+              onClick={() => handleClick(currentPage > 1 ? currentPage - 1 : 1)}
+            />
+            {Array.from({ length: totalPages }).map((_, idx) => (
+              <Pagination.Item
+                key={idx + 1}
+                active={idx + 1 === currentPage}
+                onClick={() => handleClick(idx + 1)}
+              >
+                {idx + 1}
+              </Pagination.Item>
+            ))}
+            <Pagination.Next
+              onClick={() => handleClick(currentPage < totalPages ? currentPage + 1 : totalPages)}
+            />
+          </Pagination>
+        </Col>
+        <Col md={6} className="text-end pb-4 px-4">
+          <span>{currentPage} de {totalPages}</span>
         </Col>
       </Row>
       <Row>
