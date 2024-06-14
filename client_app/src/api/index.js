@@ -44,11 +44,10 @@ class FetchData {
     try {
       const response = await fetch(FetchData._url + url, options);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw await response.json();
       }
       return await response.json();
     } catch (error) {
-      console.error(`Fetch error: ${error}`);
       throw error;
     }
   }

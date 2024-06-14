@@ -5,6 +5,7 @@ import CustomLink from '../../components/UI/CustomLink/CustomLink';
 import IconUsuario from '../../components/UI/Icon/User/User';
 import { useNavigate} from 'react-router-dom';
 import api from '../../api';
+import { ToastContainer, toast } from 'react-toastify';
 
 function Login() {
   
@@ -32,14 +33,29 @@ function Login() {
   const handleSubmit = () => {
     api.post('api/auth/login', form).then((response) => {
       api.setToken(response.access_token);
-      navigate('/');
-    }).catch((error) => {
-      console.error(error);
+      toast.success('Inicio de sesión correcto', {
+        position: "top-right",
+        autoClose: 2000,
+      });
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    })
+    .catch((exception) => {
+      if (exception.error) {
+        toast.error(exception.error);
+      } else if (exception.errors) {
+        toast.error(exception.errors);
+      }
+      else {
+        toast.error('Error al iniciar sesión');
+      }
     });
   }
 
   return (
     <div className="container mt-5">
+      <ToastContainer />
       <form className="col-md-6 mx-auto">
         <div className="card p-4">
           <IconUsuario />
