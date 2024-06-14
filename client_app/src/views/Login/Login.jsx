@@ -5,6 +5,8 @@ import Button from '../../components/UI/Button/Button';
 import CustomLink from '../../components/UI/CustomLink/CustomLink';
 import IconUsuario from '../../components/UI/Icon/User/User';
 
+import api from '../../api';
+
 function Login() {
   useEffect(() => {
     // Desactivar scroll cuando el componente se monta
