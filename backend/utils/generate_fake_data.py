@@ -20,12 +20,15 @@ cur = conn.cursor()
 cur.execute("TRUNCATE TABLE biblioteca_personal, libros_generos, libros_autores, libros, autores, generos, usuarios RESTART IDENTITY CASCADE;")
 
 # Crear usuarios falsos
+usuarios = []
 for _ in range(5):
     nombre = fake.name()
     correo_electronico = fake.email()
     contrasena_hash = fake.sha256()
-    cur.execute("INSERT INTO usuarios (nombre, correo_electronico, contrasena_hash) VALUES (%s, %s, %s)",
+    cur.execute("INSERT INTO usuarios (nombre, correo_electronico, contrasena_hash) VALUES (%s, %s, %s) RETURNING usuario_id",
                 (nombre, correo_electronico, contrasena_hash))
+    usuario_id = cur.fetchone()[0]
+    usuarios.append(usuario_id)
 
 # Crear géneros falsos
 generos = [fake.word() for _ in range(10)]
@@ -38,6 +41,7 @@ for autor in autores:
     cur.execute("INSERT INTO autores (nombre) VALUES (%s)", (autor,))
 
 # Crear libros falsos
+libros = []
 for _ in range(150):
     titulo = fake.sentence(nb_words=4)
     editorial = fake.company()
@@ -51,6 +55,7 @@ for _ in range(150):
         RETURNING libro_id
     """, (titulo, editorial, fecha_publicacion, isbn, numero_paginas, idioma))
     libro_id = cur.fetchone()[0]
+    libros.append(libro_id)
 
     # Asignar autores al libro
     autor_ids = set()
@@ -71,6 +76,15 @@ for _ in range(150):
                 VALUES (%s, %s)
                 ON CONFLICT DO NOTHING
             """, (libro_id, genero_id))
+
+# Crear entradas en biblioteca personal
+for usuario_id in usuarios:
+    num_libros = random.randint(1, 20)
+    libros_usuario = random.sample(libros, num_libros)
+    for libro_id in libros_usuario:
+        estado_leido = fake.boolean()
+        cur.execute("INSERT INTO biblioteca_personal (usuario_id, libro_id, estado_leido) VALUES (%s, %s, %s)",
+                    (usuario_id, libro_id, estado_leido))
 
 # Guardar cambios y cerrar conexión
 conn.commit()
