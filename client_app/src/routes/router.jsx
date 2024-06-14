@@ -10,22 +10,22 @@ export const routes = [
         {
           path: "/",
           element: <Home />,
-          private: false,
+          private: true,
         },
         {
           path: "/search",
           element: <SearchPage />,
-          private: false,
+          private: true,
         },
         {
           path: "/managePersonalLibrary",
           element: <ManagePersonalLibrary />,
-          private: false,
+          private: true,
         },
         {
           path: "/specificBook",
           element: <SpecificBook/>,
-          private: false,
+          private: true,
         },
         
       ],

@@ -10,7 +10,7 @@ function Navar() {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-      <div className="collapse navbar-collapse">
+      <div className="collapse navbar-collapse" id="navbarColor04">
         <ul className="navbar-nav me-auto">
 
           <li className="nav-item">
@@ -24,7 +24,7 @@ function Navar() {
         </ul>
       </div>
 
-      <div className="collapse navbar-collapse justify-content-end">
+      <div className="collapse navbar-collapse justify-content-end" id="navbarColor04">
         <form className="d-flex">
           <input className="form-control me-2" type="search" placeholder="Buscar" />
           <button className="btn btn-secondary my-2 my-sm-0" type="submit">Buscar</button>

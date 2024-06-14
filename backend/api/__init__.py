@@ -8,8 +8,11 @@ from flask_cors import CORS
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
-    CORS(app, resources={r"/*": {"origins": config_class.URL_FRONTEND}})
-
+    CORS(app, resources={
+        r"/api/*": {"origins": config_class.URL_FRONTEND},
+        r"/health": {"origins": config_class.URL_FRONTEND}
+    })
+    
     # Inicializar extensiones
     db.init_app(app)
     jwt.init_app(app)

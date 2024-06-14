@@ -1,28 +1,42 @@
-import React, { useEffect } from 'react';
-
+import React, { useEffect, useState } from 'react';
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
 import CustomLink from '../../components/UI/CustomLink/CustomLink';
 import IconUsuario from '../../components/UI/Icon/User/User';
-
+import { useNavigate} from 'react-router-dom';
 import api from '../../api';
 
 function Login() {
+  
   useEffect(() => {
-    // Desactivar scroll cuando el componente se monta
     document.body.style.overflow = 'hidden';
-
-    // Limpiar al desmontar el componente
     return () => {
       document.body.style.overflow = 'auto';
     };
   }, []);
+  
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    api.get('/health').then((response) => {
-      console.log(response);
+  const [form, setForm] = useState({
+    correo_electronico: '',
+    contrasena: '',
+  });
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
     });
-  }, []); 
+  }
+
+  const handleSubmit = () => {
+    api.post('api/auth/login', form).then((response) => {
+      api.setToken(response.access_token);
+      navigate('/');
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
 
   return (
     <div className="container mt-5">
@@ -31,18 +45,20 @@ function Login() {
           <IconUsuario />
           <h3 className="mt-3 mb-4">Iniciar sesión</h3>
           <Input
-            name="Correo electrónico"
+            name="correo_electronico"
             type="email"
             placeholder="Ingrese su correo electrónico"
             className="form-control mb-3"
+            onChange={handleChange}
           />
           <Input
-            name="Contraseña"
+            name="contrasena"
             type="password"
             placeholder="Ingrese su contraseña"
             className="form-control mb-3"
+            onChange={handleChange}
           />
-          <Button type="submit" className="btn btn-primary btn-block mb-3">
+          <Button type="button" className="btn btn-primary btn-block mb-3" onClick={handleSubmit}>
             Ingresar
           </Button>
           <CustomLink to="/registration" className="d-block text-center">

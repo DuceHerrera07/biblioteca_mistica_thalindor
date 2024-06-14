@@ -8,12 +8,31 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
+    """
+    Register a new user.
+
+    This endpoint allows the client to register a new user by providing the required information in the JSON body.
+
+    Returns:
+        A JSON response containing a success message if the user is registered successfully, or an error message if the email is already registered.
+
+    Example JSON body:
+        {
+            "nombre": "John Doe",
+            "correo_electronico": "johndoe@example.com",
+            "contrasena": "password123"
+        }
+    """
     data = request.get_json()
     if User.query.filter_by(correo_electronico=data['correo_electronico']).first():
         return jsonify({'message': 'El correo electrónico ya está registrado'}), 400
     
-    hashed_password = generate_password_hash(data['contrasena'], method='sha256')
-    new_user = User(nombre=data['nombre'], correo_electronico=data['correo_electronico'], contrasena_hash=hashed_password)
+    hashed_password = generate_password_hash(data['contrasena'], method='pbkdf2:sha256', salt_length=8)
+    new_user = User(
+        nombre=data['nombre'],
+        correo_electronico=data['correo_electronico'],
+        contrasena_hash=hashed_password
+    )
     db.session.add(new_user)
     db.session.commit()
     
@@ -21,6 +40,13 @@ def register():
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
+    """
+    Authenticates a user by checking their credentials and returning an access token.
+
+    Returns:
+        A JSON response containing an access token if the credentials are valid.
+        Otherwise, returns a JSON response with an error message and a status code of 401.
+    """
     data = request.get_json()
     user = User.query.filter_by(correo_electronico=data['correo_electronico']).first()
     if not user or not check_password_hash(user.contrasena_hash, data['contrasena']):
