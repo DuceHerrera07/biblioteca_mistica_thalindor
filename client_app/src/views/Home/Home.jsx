@@ -5,16 +5,16 @@ import CarouselPopulares from '../../components/UI/Carousel/CarouselPopulares';
 function Home() {
   return (
     <div className="container-fluid">
-      <div className="row">
+      <div className="row mx-4 p-1 my-4">
+        <h3 className="mb-4"><strong>Categorías</strong></h3>
         <div className="col-md-10 mx-auto">
-          <h4>Categorias</h4>
           <CarouselCategorias />
         </div>
       </div>
 
-      <div className="row">
+      <div className="row mx-4 p-1 my-4">
+        <h3 className="mb-4"><strong>Populares</strong></h3>
         <div className="col-md-10 mx-auto">
-          <h4>Populares</h4>
           <CarouselPopulares />
         </div>
       </div>
