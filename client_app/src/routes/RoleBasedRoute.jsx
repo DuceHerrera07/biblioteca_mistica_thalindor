@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { isAuthenticated, getUserRole } from './auth';
+import { isAuthenticated, getUserRole } from './auth/auth';
 
 const RoleBasedRoute = ({ children, role }) => {
     if (!isAuthenticated()) {
