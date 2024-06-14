@@ -38,7 +38,7 @@ def register():
 
         # Check if the email is already registered
         if User.query.filter_by(correo_electronico=data['correo_electronico']).first():
-            return jsonify({'error': 'El correo electrónico ya está registrado'}), 400
+            return jsonify({'error': 'El correo electronico ya esta registrado'}), 400
 
         # Hash the password
         hashed_password = generate_password_hash(data['contrasena_hash'], method='pbkdf2:sha256', salt_length=8)
@@ -92,7 +92,7 @@ def login():
         
         # Check if the user exists and if the password is correct
         if not user or not check_password_hash(user.contrasena_hash, data['contrasena_hash']):
-            return jsonify({'error': 'Credenciales inválidas'}), 401
+            return jsonify({'error': 'Credenciales invalidas'}), 401
 
         # Create an access token
         access_token = create_access_token(identity=user.usuario_id)
