@@ -40,25 +40,30 @@ function Registration() {
       return;
     }
 
-    console.log('Datos a enviar:', form);
-
     api.post('api/auth/register', form)
       .then((response) => {
-        let message = response.data.message;
+        let message = response.message || 'Usuario registrado correctamente';
         toast.success(message, {
           position: "top-right",
           autoClose: 2000,
         });
         setTimeout(() => {
-          navigate('/login');
+          toast.info('Redirigiendo al inicio de sesión...' , {
+            position: "top-right",
+            autoClose: 2000,
+          });
         }, 2000);
+        setTimeout(() => {
+          navigate('/login');
+        }, 4500);
       })
-      .catch((error) => {
-        if (error.response) {
-          console.error(error.response); // Mostrar detalle del error en consola
-          toast.error(error.response.data.error || 'Error al registrar el usuario');
-        } else {
-          console.error(error); // Mostrar cualquier otro tipo de error en consola
+      .catch((exception) => {
+        if (exception.error) {
+          toast.error(exception.error);
+        } else if (exception.errors) {
+          toast.error(exception.errors);
+        }
+        else {
           toast.error('Error al registrar el usuario');
         }
       });
