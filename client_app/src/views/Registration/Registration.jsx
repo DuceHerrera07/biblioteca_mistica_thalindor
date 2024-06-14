@@ -4,8 +4,7 @@ import Button from '../../components/UI/Button/Button';
 import CustomLink from '../../components/UI/CustomLink/CustomLink';
 import IconUsuario from '../../components/UI/Icon/User/Registration';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import api from '../../api';
 
 function Registration() {
@@ -71,7 +70,6 @@ function Registration() {
 
   return (
     <div className="container mt-5">
-      <ToastContainer />
       <form className="col-md-6 mx-auto">
         <div className="card p-4">
           <IconUsuario />

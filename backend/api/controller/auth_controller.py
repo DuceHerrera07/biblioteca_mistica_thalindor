@@ -33,20 +33,24 @@ def register():
             return jsonify({'error': 'No input data provided'}), 400
         
         # Validate input data
-        data['contrasena_hash'] = data.pop('contrasena')
-        user_schema_partial.load(data)
+        user_data = {
+            'nombre': data.get('nombre'),
+            'correo_electronico': data.get('correo_electronico'),
+            'contrasena_hash': data.get('contrasena')
+        }
+        user_schema_partial.load(user_data)
 
         # Check if the email is already registered
-        if User.query.filter_by(correo_electronico=data['correo_electronico']).first():
-            return jsonify({'error': 'El correo electronico ya esta registrado'}), 400
+        if User.query.filter_by(correo_electronico=user_data['correo_electronico']).first():
+            return jsonify({'error': 'El correo electrónico ya está registrado'}), 400
 
         # Hash the password
-        hashed_password = generate_password_hash(data['contrasena_hash'], method='pbkdf2:sha256', salt_length=8)
+        hashed_password = generate_password_hash(user_data['contrasena_hash'], method='pbkdf2:sha256', salt_length=8)
         
         # Create a new user instance
         new_user = User(
-            nombre=data['nombre'],
-            correo_electronico=data['correo_electronico'],
+            nombre=user_data['nombre'],
+            correo_electronico=user_data['correo_electronico'],
             contrasena_hash=hashed_password
         )
         
@@ -84,15 +88,18 @@ def login():
             return jsonify({'error': 'No input data provided'}), 400
         
         # Validate input data
-        data['contrasena_hash'] = data.pop('contrasena')
-        user_schema_partial.load(data)
+        login_data = {
+            'correo_electronico': data.get('correo_electronico'),
+            'contrasena_hash': data.get('contrasena')
+        }
+        user_schema_partial.load(login_data)
 
         # Find the user by email
-        user = User.query.filter_by(correo_electronico=data['correo_electronico']).first()
+        user = User.query.filter_by(correo_electronico=login_data['correo_electronico']).first()
         
         # Check if the user exists and if the password is correct
-        if not user or not check_password_hash(user.contrasena_hash, data['contrasena_hash']):
-            return jsonify({'error': 'Credenciales invalidas'}), 401
+        if not user or not check_password_hash(user.contrasena_hash, login_data['contrasena_hash']):
+            return jsonify({'error': 'Credenciales inválidas'}), 401
 
         # Create an access token
         access_token = create_access_token(identity=user.usuario_id)

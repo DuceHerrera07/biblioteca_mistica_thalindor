@@ -5,7 +5,7 @@ import CustomLink from '../../components/UI/CustomLink/CustomLink';
 import IconUsuario from '../../components/UI/Icon/User/User';
 import { useNavigate} from 'react-router-dom';
 import api from '../../api';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 function Login() {
   
@@ -55,7 +55,6 @@ function Login() {
 
   return (
     <div className="container mt-5">
-      <ToastContainer />
       <form className="col-md-6 mx-auto">
         <div className="card p-4">
           <IconUsuario />
