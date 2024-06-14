@@ -1,12 +1,14 @@
-from flask import Flask
+from flask import Flask, jsonify
 from api.config import Config
 from api.extensions import db, jwt
 from api.controller.auth_controller import auth_bp
 from api.controller.library_controller import library_bp
+from flask_cors import CORS
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    CORS(app, resources={r"/*": {"origins": config_class.URL_FRONTEND}})
 
     # Inicializar extensiones
     db.init_app(app)
@@ -19,6 +21,6 @@ def create_app(config_class=Config):
     #health check
     @app.route('/health')
     def health():
-        return 'Healthy', 200
+        return jsonify({'status': 'Healthy'}), 200
 
     return app

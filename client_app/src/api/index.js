@@ -66,7 +66,7 @@ class FetchData {
   }
 
   async get(url) {
-    return this._fetch(url, 'GET', null, true);
+    return await this._fetch(url, 'GET', null, true);
   }
 
   async post(url, body) {

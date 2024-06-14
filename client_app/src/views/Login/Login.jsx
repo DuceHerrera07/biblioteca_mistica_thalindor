@@ -17,7 +17,13 @@ function Login() {
       document.body.style.overflow = 'auto';
     };
   }, []);
-  
+
+  useEffect(() => {
+    api.get('/health').then((response) => {
+      console.log(response);
+    });
+  }, []); 
+
   return (
     <div className="container mt-5">
       <form className="col-md-6 mx-auto">
