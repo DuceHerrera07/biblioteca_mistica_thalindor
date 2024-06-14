@@ -3,8 +3,9 @@ import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
 import CustomLink from '../../components/UI/CustomLink/CustomLink';
 import IconUsuario from '../../components/UI/Icon/User/Registration';
-import { useNavigate} from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import api from '../../api';
 
 function Registration() {
@@ -28,27 +29,44 @@ function Registration() {
       ...form,
       [e.target.name]: e.target.value,
     });
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/login')
-    api.post('api/auth/register', form).then((response) => {
-      let message = response.message;
-      toast.success(message, {
-        position: "top-right",
-        autoClose: 2000,
+
+    // Validar los datos antes de enviar la solicitud POST
+    if (!form.nombre || !form.correo_electronico || !form.contrasena) {
+      toast.error('Todos los campos son obligatorios');
+      return;
+    }
+
+    console.log('Datos a enviar:', form);
+
+    api.post('api/auth/register', form)
+      .then((response) => {
+        let message = response.data.message;
+        toast.success(message, {
+          position: "top-right",
+          autoClose: 2000,
+        });
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.error(error.response); // Mostrar detalle del error en consola
+          toast.error(error.response.data.error || 'Error al registrar el usuario');
+        } else {
+          console.error(error); // Mostrar cualquier otro tipo de error en consola
+          toast.error('Error al registrar el usuario');
+        }
       });
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
-    }).catch((error) => {
-      toast.error('Error al registrar el usuario');
-    });
-  }
+  };
 
   return (
     <div className="container mt-5">
+      <ToastContainer />
       <form className="col-md-6 mx-auto">
         <div className="card p-4">
           <IconUsuario />
