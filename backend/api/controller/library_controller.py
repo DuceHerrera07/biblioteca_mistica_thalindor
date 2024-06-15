@@ -126,6 +126,49 @@ def add_to_personal_library():
         return jsonify({'errors': err.messages}), 422
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@library_bp.route('/personal_library_update/', methods=['PUT'])
+@jwt_required()
+def update_personal_library():
+    """
+    Update the read status of a book in the personal library of the authenticated user.
+
+    This endpoint allows the client to update the read status of a book in the personal library of the currently authenticated user.
+
+    Returns:
+        JSON: A response indicating the success or failure of the operation.
+
+    Example JSON body:
+        {
+            "libro_id": 1,
+            "estado_leido": true
+        }
+        
+    Example response:
+        {
+            "message": "Estado de lectura actualizado"
+        }
+    """
+    try:
+        current_user_id = get_jwt_identity()
+        data = request.get_json()
+        libro_id = data['libro_id']
+        estado_leido = data['estado_leido']
+
+        entry = PersonalLibrary.query.filter_by(usuario_id=current_user_id, libro_id=libro_id).first()
+
+        if not entry:
+            return jsonify({'message': 'El libro no está en la biblioteca personal'}), 404
+
+        entry.estado_leido = estado_leido
+        db.session.commit()
+
+        return jsonify({'message': 'Estado de lectura actualizado'}), 200
+
+    except ValidationError as err:
+        return jsonify({'errors': err.messages}), 422
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @library_bp.route('/personal_library_remove/<int:libro_id>', methods=['DELETE'])
 @jwt_required()

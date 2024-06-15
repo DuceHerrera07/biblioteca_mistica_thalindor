@@ -71,6 +71,8 @@ export default function SpecificBook() {
                   fecha_publicacion={currentBook.fecha_publicacion}
                   en_libreria_personal={currentBook.en_libreria_personal}
                   estado_leido={currentBook.estado_leido}
+                  libro_id={idlibro}
+                  fetch_data={()=>fetchBook()}
                 />
               </div>
             </div>
