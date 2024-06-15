@@ -7,5 +7,6 @@ const Home = React.lazy(() => import('./Home/Home.jsx'));
 const SearchPage = React.lazy(() => import('./SearchPage/SearchPage.jsx'));
 const ErrorPage = React.lazy(() => import('./ErrorPage/ErrorPage.jsx'));
 const ManagePersonalLibrary = React.lazy(() => import('./ManagePersonalLibrary/ManagePersonalLibrary.jsx'));
+const SpecificBook = React.lazy(() => import('./SpecificBook/SpecificBook.jsx'));
 
-export { Login, Home, SearchPage, Registration, ErrorPage, ManagePersonalLibrary };
+export { Login, Home, SearchPage, Registration, ErrorPage, ManagePersonalLibrary, SpecificBook };

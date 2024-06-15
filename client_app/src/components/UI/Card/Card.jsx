@@ -1,19 +1,70 @@
 import React from 'react';
-import '../Card/StyleCard.css';
+import { useNavigate } from 'react-router-dom';
 
-export default function Card({ title, subtitle, icon, link }) {
+const Card = ({ title, subtitle, link, ...more }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="card mb-3 custom-card">
-      <div className="card-body">
-        <h5 className="card-title">{title}</h5>
-        <h6 className="card-subtitle text-muted">{subtitle}</h6>
+    <div className="card shadow-sm" style={{ borderRadius: '5px', overflow: 'hidden', maxWidth: '100%' }}>
+      <div className="d-flex justify-content-center">
+        <img
+          src="https://via.placeholder.com/200"
+          className="card-img-top"
+          alt="Placeholder"
+          style={{
+            height: '200px',
+            width: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center'
+          }}
+        />
       </div>
-      <div className="icon-container">
-        {icon && icon}
-      </div>
-      <div className="card-body">
-        {link && <a href={link.href} className="card-link">{link.text}</a>}
+      <div className="card-body" style={{ padding: '10px' }}>
+        <h5 className="card-title" style={{
+          fontSize: '1rem',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          marginBottom: '5px',
+          fontWeight: 'bold'
+        }}>{title}</h5>
+        <p className="card-subtitle mb-2 text-muted" style={{
+          fontSize: '0.85rem',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
+        }}>{subtitle}</p>
+        {more.rating && (
+          <p className="card-text" style={{
+            fontSize: '0.85rem',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+          }}>
+            <small>{more.rating.text}: {more.rating.count}</small>
+          </p>
+        )}
+        <div className="d-flex justify-content-end">
+          <a 
+            onClick={() => {
+              if (more.onClickSelectedCategory) {
+                more.onClickSelectedCategory();
+                navigate(link.href);
+              } else {
+                navigate(link.href);
+              }
+            }}
+            className="btn btn-primary btn-sm"
+            style={{
+              fontSize: '0.85rem',
+              padding: '3px 10px',
+              borderRadius: '20px'
+            }}
+          >{link.text}</a>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default Card;

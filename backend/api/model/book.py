@@ -10,6 +10,7 @@ class Book(db.Model):
     isbn = db.Column(db.String(255), unique=True, nullable=False)
     numero_paginas = db.Column(db.Integer)
     idioma = db.Column(db.String(100))
+    descripcion = db.Column(db.Text)
 
     # Relaciones
     autores = db.relationship('Author', secondary='libros_autores', back_populates='libros')

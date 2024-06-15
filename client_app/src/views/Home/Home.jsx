@@ -1,26 +1,25 @@
-import React from 'react'
-import Carousel from '../../components/UI/Carousel/Carousel'
-import Card from '../../components/UI/Card/Card'
-import Fantasy from '../../components/UI/Iconos/Usuario/Book/Fantasy'
-
+import React from 'react';
+import CarouselCategorias from '../../components/UI/Carousel/CarouselCategorias';
+import CarouselPopulares from '../../components/UI/Carousel/CarouselPopulares';
 
 function Home() {
   return (
-    <div>Home
-      <h1>Categorias</h1>
-      <Carousel/>
+    <div className="container-fluid">
+      <div className="row mx-2">
+        <h3 className="mb-1"><strong>Categorías</strong></h3>
+        <div className="col-md-10 mx-auto">
+          <CarouselCategorias />
+        </div>
+      </div>
 
-      <h1>Populares</h1>
-      <Card
-        title={'Libro 1'}
-        subtitle={'Autor 1'}
-        icon={<Fantasy/>}
-        link={'#'}
-      />
+      <div className="row mx-2">
+        <h3 className="mb-1"><strong>Libros populares</strong></h3>
+        <div className="col-md-10 mx-auto">
+          <CarouselPopulares />
+        </div>
+      </div>
     </div>
-
-    
-  )
+  );
 }
 
-export default Home
+export default Home;
