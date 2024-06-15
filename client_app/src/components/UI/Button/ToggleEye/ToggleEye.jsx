@@ -13,7 +13,7 @@ export default function ToggleEye() {
   return (
     <OverlayTrigger
       placement="top"
-      overlay={<Tooltip>{isEye ? 'Pendiente' : 'Visto'}</Tooltip>}
+      overlay={<Tooltip>{isEye ? 'No leído' : 'Leído'}</Tooltip>}
     >
       <div onClick={handleClick} style={{ cursor: 'pointer' }}>
         {isEye ? <Eye /> : <EyeSlash />}

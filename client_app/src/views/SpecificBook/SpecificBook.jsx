@@ -34,7 +34,7 @@ export default function SpecificBook() {
   }, [books]);
 
   const handleAddBook = (book) => {
-    if (!books.find((b) => b.idlibro=== book.idlibro)) {
+    if (!books.find((b) => b.libro_id=== book.libro_id)) {
       setBooks([...books, book]);
     }
   };
@@ -88,7 +88,7 @@ export default function SpecificBook() {
 
             <div className="col-md-12">
               <div className="card bg-transparent border-0 p-2">
-                <ButtonAdd book={currentBook} onAdd={handleAddBook} />
+              <ButtonAdd book={currentBook} onAdd={() => handleAddBook(currentBook)} />
               </div>
             </div>
           </div>
