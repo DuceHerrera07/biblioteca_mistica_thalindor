@@ -50,6 +50,7 @@ const Card = ({ title, subtitle, link, ...more}) => {
                 more.onClickSelectedCategory();
                 navigate(link.href);
               }
+              navigate(link.href);
             }}
             className="btn btn-primary btn-sm"
             style={{
