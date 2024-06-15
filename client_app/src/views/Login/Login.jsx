@@ -54,11 +54,11 @@ function Login() {
   }
 
   return (
-    <div className="container mt-5">
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
       <form className="col-md-6 mx-auto">
         <div className="card p-4">
           <IconUsuario />
-          <h3 className="mt-3 mb-4">Iniciar sesión</h3>
+          <h3 className="mt-3 mb-4 text-center">Iniciar sesión</h3>
           <Input
             name="correo_electronico"
             type="email"
