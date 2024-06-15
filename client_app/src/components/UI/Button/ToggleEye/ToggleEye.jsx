@@ -3,8 +3,8 @@ import Eye from '../../Icon/ButtonEye/Eye';
 import EyeSlash from '../../Icon/ButtonEye/EyeSlash';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-export default function ToggleEye() {
-  const [isEye, setIsEye] = useState(true);
+export default function ToggleEye(estado_leido) {
+  const [isEye, setIsEye] = useState(estado_leido);
 
   const handleClick = () => {
     setIsEye(!isEye);

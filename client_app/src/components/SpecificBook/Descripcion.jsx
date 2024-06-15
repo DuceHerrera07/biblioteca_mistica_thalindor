@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Descripcion = ({ texto }) => {
-  const limiteCaracteres = 455; // Límite máximo de caracteres para la descripción
+  const limiteCaracteres = 855; // Límite máximo de caracteres para la descripción
 
   // Función para truncar el texto si excede el límite de caracteres
   const truncarTexto = (text) => {

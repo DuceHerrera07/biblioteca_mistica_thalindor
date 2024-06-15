@@ -18,45 +18,76 @@ personal_library_schema = PersonalLibrarySchema(many=True)
 genre_schema = GenreSchema()
 genres_schema = GenreSchema(many=True)
 
-@library_bp.route('/personal_library', methods=['GET'])
+@library_bp.route('/personal_library', methods=['POST'])
 @jwt_required()
 def get_personal_library():
     """
-    Get the personal library of the authenticated user.
+    Get the personal library of the authenticated user with pagination and search functionality.
 
-    This endpoint allows the client to retrieve the list of books in the personal library of the currently authenticated user.
+    This endpoint allows the client to retrieve the list of books in the personal library of the currently authenticated user
+    with pagination and search filters.
 
     Returns:
         JSON: A response containing the list of books in the personal library.
 
+    Example JSON body:
+        {
+            "search": "some title",
+            "page": 1
+        }
+
     Example response:
-        [
-            {
-                "titulo": "Book Title",
-                "autores": ["Author 1", "Author 2"],
-                "editorial": "Editorial Name",
-                "fecha_publicacion": "2023-01-01",
-                "isbn": "1234567890123",
-                "numero_paginas": 300,
-                "genero": ["Genre 1", "Genre 2"],
-                "idioma": "Español",
-                "estado_leido": true
-            }
-        ]
+        {
+            "total_pages": 2,
+            "current_page": 1,
+            "books": [
+                {
+                    "titulo": "Book Title",
+                    "autores": ["Author 1", "Author 2"],
+                    "editorial": "Editorial Name",
+                    "fecha_publicacion": "2023-01-01",
+                    "isbn": "1234567890123",
+                    "numero_paginas": 300,
+                    "genero": ["Genre 1", "Genre 2"],
+                    "idioma": "Español",
+                    "estado_leido": true
+                }
+            ]
+        }
     """
     try:
-        current_user_id = get_jwt_identity()
-        personal_library = PersonalLibrary.query.filter_by(usuario_id=current_user_id).all()
+        data = request.get_json()
+        search = data.get('search', '')
+        page = data.get('page', 1)
+        books_per_page = 50
 
-        result = personal_library_schema.dump(personal_library)
-        return jsonify(result), 200
+        current_user_id = get_jwt_identity()
+
+        query = PersonalLibrary.query.filter_by(usuario_id=current_user_id)
+        
+        if search:
+            query = query.join(Book).filter(Book.titulo.ilike(f'%{search}%'))
+
+        total_books = query.count()
+        personal_library = query.paginate(page=page, per_page=books_per_page, error_out=False)
+
+        result = personal_library_schema.dump(personal_library.items)
+        
+        response = {
+            "total_pages": personal_library.pages,
+            "total_books": total_books,
+            "current_page": page,
+            "books": result
+        }
+
+        return jsonify(response), 200
 
     except ValidationError as err:
         return jsonify({'errors': err.messages}), 422
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@library_bp.route('/personal_library', methods=['POST'])
+@library_bp.route('/personal_library_add/', methods=['POST'])
 @jwt_required()
 def add_to_personal_library():
     """
@@ -96,7 +127,7 @@ def add_to_personal_library():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@library_bp.route('/personal_library/<int:libro_id>', methods=['DELETE'])
+@library_bp.route('/personal_library_remove/<int:libro_id>', methods=['DELETE'])
 @jwt_required()
 def remove_from_personal_library(libro_id):
     """
@@ -191,6 +222,7 @@ def search_books():
         result = []
         for book in books.items:
             result.append({
+                "libro_id": book.libro_id,
                 "titulo": book.titulo,
                 "autores": [author.nombre for author in book.autores],
                 "editorial": book.editorial,
@@ -245,6 +277,11 @@ def get_book(libro_id):
         result = book_schema.dump(book)
         result['autores'] = [author.nombre for author in book.autores]
         result['generos'] = [genre.descripcion for genre in book.generos]
+        
+        current_user_id = get_jwt_identity()
+        entry = PersonalLibrary.query.filter_by(usuario_id=current_user_id, libro_id=libro_id).first()
+        result['en_libreria_personal'] = True if entry else False
+        result['estado_leido'] = entry.estado_leido if entry else False
         return jsonify(result), 200
 
     except ValidationError as err:

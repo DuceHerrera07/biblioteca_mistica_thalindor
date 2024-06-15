@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Pagination, Form } from 'react-bootstrap';
 import api from '../../api';
 import SpinnerComponent from '../../components/Spinner/SpinnerComponent';
 import { SearchContext } from '../../../Context/SearchContext';
+import { NavLink } from 'react-router-dom';
 
 function SearchPage() {
   // Filtros
@@ -110,7 +111,10 @@ function SearchPage() {
           </button>
         </Col>
       </Row>
-      <Row className="justify-content-between align-items-center">
+      {books.length == 0 && <div className="alert alert-warning text-black text-center" role="alert">
+        No se encontraron libros.
+      </div>}
+      {books.length != 0 && (<Row className="justify-content-between align-items-center">
         <Col md={6}>
           <Pagination>
             <Pagination.Prev
@@ -133,8 +137,8 @@ function SearchPage() {
         <Col md={6} className="text-end pb-3 pe-3">
           <span>{currentBooksByPage} de {total_books}</span>
         </Col>
-      </Row>
-      {loading ? <div style={{height: '400px'}}><SpinnerComponent /> </div>: (
+      </Row>)}
+      {loading ? <div style={{height: '400px'}}><SpinnerComponent /> </div>: books.length != 0 && (
         <Row>
           {books.map((book, idx) => (
             <Col key={idx} md={3} className="mb-4">
@@ -146,13 +150,16 @@ function SearchPage() {
                   <Card.Text>
                     <small>{`Género(s): ${book.generos.join(', ')}`}</small>
                   </Card.Text>
+                  <Card.Text>
+                    <NavLink to={`/specificBook/${book.libro_id}`}>Ver más</NavLink>
+                  </Card.Text>
                 </Card.Body>
               </Card>
             </Col>
           ))}
         </Row>
       )}
-      <Row className="justify-content-between align-items-center">
+      {books.length != 0 && ( <Row className="justify-content-between align-items-center">
         <Col md={6}>
           <Pagination>
             <Pagination.Prev
@@ -175,7 +182,7 @@ function SearchPage() {
         <Col md={6} className="text-end pb-4 px-4">
           <span>{currentBooksByPage} de {total_books}</span>
         </Col>
-      </Row>
+      </Row>)}
     </Container>
   );
 }
