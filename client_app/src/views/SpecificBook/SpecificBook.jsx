@@ -24,13 +24,6 @@ export default function SpecificBook() {
   }, []);
   
 
-  const generos = ['Fantasía', 'Aventura', 'Drama'];
-  const titulo = 'Dracula';
-  const libro = {
-    id: 1,
-    title: titulo,
-  };
-
   const [books, setBooks] = useState(() => {
     const savedBooks = localStorage.getItem('books');
     return savedBooks ? JSON.parse(savedBooks) : [];
@@ -41,7 +34,7 @@ export default function SpecificBook() {
   }, [books]);
 
   const handleAddBook = (book) => {
-    if (!books.find((b) => b.id === book.id)) {
+    if (!books.find((b) => b.idlibro=== book.idlibro)) {
       setBooks([...books, book]);
     }
   };
@@ -56,7 +49,7 @@ export default function SpecificBook() {
         {/* Primera columna */}
         <div className="col-md-4">
           <div className="card bg-transparent border-0 p-1">
-            <CardSpecific subtitle={'Autor: '} />
+            <CardSpecific subtitle={currentBook.isbn} />
           </div>
         </div>
 
@@ -65,9 +58,8 @@ export default function SpecificBook() {
           <div className="row">
             <div className="col-md-12 mb-2">
               <div className="card bg-transparent border-0">
-                <p>
-                  <strong>Título:</strong> {titulo}
-                </p>
+                <p><strong>Título: </strong> {currentBook.titulo}</p>
+                <p><strong>Autor: </strong>{currentBook.autores} </p>
               </div>
             </div>
 
@@ -79,24 +71,24 @@ export default function SpecificBook() {
 
             <div className="col-md-12 mb-2">
               <div className="card bg-transparent border-0">
-                <Generos generos={generos} />
+                <Generos generos={currentBook.generos} />
               </div>
             </div>
 
             <div className="col-md-12 mb-2">
               <div className="card bg-transparent border-0 p-1">
                 <Informacion
-                  No_paginas={223}
-                  editorial={'Book'}
-                  idiomas={'Español'}
-                  fecha_publicacion={2000}
+                  No_paginas={currentBook.numero_paginas}
+                  editorial={currentBook.editorial}
+                  idiomas={currentBook.idioma}
+                  fecha_publicacion={currentBook.fecha_publicacion}
                 />
               </div>
             </div>
 
             <div className="col-md-12">
               <div className="card bg-transparent border-0 p-2">
-                <ButtonAdd book={libro} onAdd={handleAddBook} />
+                <ButtonAdd book={currentBook} onAdd={handleAddBook} />
               </div>
             </div>
           </div>
