@@ -67,11 +67,12 @@ function SearchPage() {
     updateSearchTerm(e.target.value);
   };
 
-  let currentBooksByPage = books.length;
+  const booksByPage = 50;
+  let currentBooksByPage = books.length > 0 ? `${(currentPage - 1) * booksByPage + 1} - ${(currentPage * booksByPage) - (booksByPage - books.length)}` : 0;
 
   return (
     <Container className="mt-4">
-      <Row>
+      <Row>  
         <Col md={12} className="d-flex justify-content-between align-items-center mb-4">
           <h2>Libros</h2>
           <div>
@@ -109,7 +110,31 @@ function SearchPage() {
           </button>
         </Col>
       </Row>
-      {loading ? <SpinnerComponent /> : (
+      <Row className="justify-content-between align-items-center">
+        <Col md={6}>
+          <Pagination>
+            <Pagination.Prev
+              onClick={() => handleClick(currentPage > 1 ? currentPage - 1 : 1)}
+            />
+            {Array.from({ length: totalPages }).map((_, idx) => (
+              <Pagination.Item
+                key={idx + 1}
+                active={idx + 1 === currentPage}
+                onClick={() => handleClick(idx + 1)}
+              >
+                {idx + 1}
+              </Pagination.Item>
+            ))}
+            <Pagination.Next
+              onClick={() => handleClick(currentPage < totalPages ? currentPage + 1 : totalPages)}
+            />
+          </Pagination>
+        </Col>
+        <Col md={6} className="text-end pb-3 pe-3">
+          <span>{currentBooksByPage} de {total_books}</span>
+        </Col>
+      </Row>
+      {loading ? <div style={{height: '400px'}}><SpinnerComponent /> </div>: (
         <Row>
           {books.map((book, idx) => (
             <Col key={idx} md={3} className="mb-4">

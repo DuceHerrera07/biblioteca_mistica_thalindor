@@ -40,7 +40,7 @@ export default function SpecificBook() {
   };
 
   if (loading) {
-    return <div><SpinnerComponent/></div>;
+    return <div style={{height: '100vh'}}><SpinnerComponent/></div>;
   }
 
   return (

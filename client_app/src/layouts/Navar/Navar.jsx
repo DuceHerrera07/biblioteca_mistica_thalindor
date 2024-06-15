@@ -37,7 +37,7 @@ function Navar() {
               <a className="nav-link" href="/managePersonalLibrary">Libreria personal</a>
             </li>
           </ul>
-          { window.location.pathname === '/' && (
+          { window.location.pathname !== '/search' && (
             <form className="d-flex">
               <input className="form-control me-2" type="search" placeholder="Buscar" value={searchTerm} onChange={(e)=> handleSearchChange(e)}/>
               <button className="btn btn-secondary my-2 my-sm-0" type="button" onClick={()=>{navigate('/search')}}>Buscar</button>
