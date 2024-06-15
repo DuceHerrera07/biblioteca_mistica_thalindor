@@ -111,7 +111,7 @@ function SearchPage() {
           </button>
         </Col>
       </Row>
-      {books.length == 0 && <div className="alert alert-warning text-black text-center" role="alert">
+      {books.length == 0 && !loading && <div className="alert alert-warning text-black text-center" role="alert">
         No se encontraron libros.
       </div>}
       {books.length != 0 && (<Row className="justify-content-between align-items-center">
