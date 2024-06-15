@@ -364,3 +364,96 @@ def get_genres():
         return jsonify({'errors': err.messages}), 422
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@library_bp.route('/top_books', methods=['GET'])
+@jwt_required()
+def get_top_books():
+    """
+    Get the top 10 most popular books based on the number of relations with personal libraries.
+
+    This endpoint allows the client to retrieve the top 10 most popular books based on the number of relations with personal libraries.
+
+    Returns:
+        JSON: A response containing the list of top 10 most popular books.
+
+    Example response:
+        [
+            {
+                "libro_id": 1,
+                "titulo": "Book Title",
+                "autores": ["Author 1", "Author 2"],
+                "editorial": "Editorial Name",
+                "fecha_publicacion": "2023-01-01",
+                "isbn": "1234567890123",
+                "numero_paginas": 300,
+                "generos": ["Genre 1", "Genre 2"],
+                "idioma": "Español",
+                "cantidad_guardados": 10
+            }
+        ]
+    """
+    try:
+        top_books = db.session.query(
+            Book,
+            func.count(PersonalLibrary.libro_id).label('cantidad_guardados')
+        ).outerjoin(PersonalLibrary).group_by(Book.libro_id).order_by(func.count(PersonalLibrary.libro_id).desc()).limit(10).all()
+
+        result = []
+        for book, cantidad_guardados in top_books:
+            result.append({
+                "libro_id": book.libro_id,
+                "titulo": book.titulo,
+                "autores": [author.nombre for author in book.autores],
+                "editorial": book.editorial,
+                "fecha_publicacion": book.fecha_publicacion,
+                "isbn": book.isbn,
+                "numero_paginas": book.numero_paginas,
+                "generos": [genre.descripcion for genre in book.generos],
+                "idioma": book.idioma,
+                "cantidad_guardados": cantidad_guardados
+            })
+
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@library_bp.route('/top_categories', methods=['GET'])
+@jwt_required()
+def get_top_categories():
+    """
+    Get the top 6 categories with the most books.
+
+    This endpoint allows the client to retrieve the top 6 categories with the most books.
+
+    Returns:
+        JSON: A response containing the list of top 6 categories.
+
+    Example response:
+        [
+            {
+                "genero_id": 1,
+                "descripcion": "Fantasy",
+                "count": 50
+            },
+            {
+                "genero_id": 2,
+                "descripcion": "Science Fiction",
+                "count": 45
+            }
+        ]
+    """
+    try:
+        top_categories = db.session.query(
+            Genre.genero_id,
+            Genre.descripcion,
+            func.count(Book.libro_id).label('count')
+        ).join(Book.generos).group_by(Genre.genero_id).order_by(func.count(Book.libro_id).desc()).limit(6).all()
+
+        result = [{"genero_id": genero_id, "descripcion": descripcion, "count": count} for genero_id, descripcion, count in top_categories]
+        
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

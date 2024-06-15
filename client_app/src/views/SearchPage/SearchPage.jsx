@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 
 function SearchPage() {
   // Filtros
-  const { searchTerm, updateSearchTerm} = useContext(SearchContext);
+  const { searchTerm, updateSearchTerm, getSelectedCategory } = useContext(SearchContext);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [ordenarPorPopulares, setOrdenarPorPopulares] = useState(false);
 
@@ -20,6 +20,10 @@ function SearchPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [total_books, setTotalBooks] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setSelectedCategory(getSelectedCategory());
+  }, [getSelectedCategory]);
 
   const fetchBooks = (page) => {
     setLoading(true);
@@ -48,7 +52,7 @@ function SearchPage() {
 
   useEffect(() => {
     fetchBooks(currentPage);
-  }, [currentPage]);
+  }, [currentPage, selectedCategory, ordenarPorPopulares]);
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
@@ -85,7 +89,7 @@ function SearchPage() {
       </Row>
       <Row className="justify-content-between align-items-center mb-4">
         <Col md={6}>
-          <Form.Select aria-label="Filtrar por categoría" onChange={handleCategoryChange}>
+          <Form.Select aria-label="Filtrar por categoría" value={selectedCategory} onChange={handleCategoryChange}>
             <option value="">Todas las categorías</option>
             {categories.map((cat, idx) => (
               <option key={idx} value={cat.genero_id}>{cat.descripcion}</option>
@@ -111,78 +115,81 @@ function SearchPage() {
           </button>
         </Col>
       </Row>
-      {books.length == 0 && !loading && <div className="alert alert-warning text-black text-center" role="alert">
+      {books.length === 0 && !loading && <div className="alert alert-warning text-black text-center" role="alert">
         No se encontraron libros.
       </div>}
-      {books.length != 0 && (<Row className="justify-content-between align-items-center">
-        <Col md={6}>
-          <Pagination>
-            <Pagination.Prev
-              onClick={() => handleClick(currentPage > 1 ? currentPage - 1 : 1)}
-            />
-            {Array.from({ length: totalPages }).map((_, idx) => (
-              <Pagination.Item
-                key={idx + 1}
-                active={idx + 1 === currentPage}
-                onClick={() => handleClick(idx + 1)}
-              >
-                {idx + 1}
-              </Pagination.Item>
-            ))}
-            <Pagination.Next
-              onClick={() => handleClick(currentPage < totalPages ? currentPage + 1 : totalPages)}
-            />
-          </Pagination>
-        </Col>
-        <Col md={6} className="text-end pb-3 pe-3">
-          <span>{currentBooksByPage} de {total_books}</span>
-        </Col>
-      </Row>)}
-      {loading ? <div style={{height: '400px'}}><SpinnerComponent /> </div>: books.length != 0 && (
-        <Row>
-          {books.map((book, idx) => (
-            <Col key={idx} md={3} className="mb-4">
-              <Card style={{ height: '450px' }}>
-                <Card.Img variant="top" src={'https://via.placeholder.com/250'} height={250} width={250} />
-                <Card.Body>
-                  <Card.Title>{`Título: ${book.titulo}`}</Card.Title>
-                  <Card.Text>{`Autor(es): ${book.autores.join(', ')}`}</Card.Text>
-                  <Card.Text>
-                    <small>{`Género(s): ${book.generos.join(', ')}`}</small>
-                  </Card.Text>
-                  <Card.Text>
-                    <NavLink to={`/specificBook/${book.libro_id}`}>Ver más</NavLink>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
+      {books.length !== 0 && (
+        <>
+          <Row className="justify-content-between align-items-center">
+            <Col md={6}>
+              <Pagination>
+                <Pagination.Prev
+                  onClick={() => handleClick(currentPage > 1 ? currentPage - 1 : 1)}
+                />
+                {Array.from({ length: totalPages }).map((_, idx) => (
+                  <Pagination.Item
+                    key={idx + 1}
+                    active={idx + 1 === currentPage}
+                    onClick={() => handleClick(idx + 1)}
+                  >
+                    {idx + 1}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next
+                  onClick={() => handleClick(currentPage < totalPages ? currentPage + 1 : totalPages)}
+                />
+              </Pagination>
             </Col>
-          ))}
-        </Row>
-      )}
-      {books.length != 0 && ( <Row className="justify-content-between align-items-center">
-        <Col md={6}>
-          <Pagination>
-            <Pagination.Prev
-              onClick={() => handleClick(currentPage > 1 ? currentPage - 1 : 1)}
-            />
-            {Array.from({ length: totalPages }).map((_, idx) => (
-              <Pagination.Item
-                key={idx + 1}
-                active={idx + 1 === currentPage}
-                onClick={() => handleClick(idx + 1)}
-              >
-                {idx + 1}
-              </Pagination.Item>
+            <Col md={6} className="text-end pb-3 pe-3">
+              <span>{currentBooksByPage} de {total_books}</span>
+            </Col>
+          </Row>
+          <Row>
+            {books.map((book, idx) => (
+              <Col key={idx} md={3} className="mb-4">
+                <Card style={{  }}>
+                  <Card.Img variant="top" src={'https://via.placeholder.com/250'} height={250} width={250} />
+                  <Card.Body>
+                    <Card.Title>{`Título: ${book.titulo}`}</Card.Title>
+                    <Card.Text>{`Autor(es): ${book.autores.join(', ')}`}</Card.Text>
+                    <Card.Text>
+                      <small>{`Género(s): ${book.generos.join(', ')}`}</small>
+                    </Card.Text>
+                    <Card.Text>
+                      <NavLink to={`/specificBook/${book.libro_id}`}>Ver más</NavLink>
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
             ))}
-            <Pagination.Next
-              onClick={() => handleClick(currentPage < totalPages ? currentPage + 1 : totalPages)}
-            />
-          </Pagination>
-        </Col>
-        <Col md={6} className="text-end pb-4 px-4">
-          <span>{currentBooksByPage} de {total_books}</span>
-        </Col>
-      </Row>)}
+          </Row>
+          <Row className="justify-content-between align-items-center">
+            <Col md={6}>
+              <Pagination>
+                <Pagination.Prev
+                  onClick={() => handleClick(currentPage > 1 ? currentPage - 1 : 1)}
+                />
+                {Array.from({ length: totalPages }).map((_, idx) => (
+                  <Pagination.Item
+                    key={idx + 1}
+                    active={idx + 1 === currentPage}
+                    onClick={() => handleClick(idx + 1)}
+                  >
+                    {idx + 1}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next
+                  onClick={() => handleClick(currentPage < totalPages ? currentPage + 1 : totalPages)}
+                />
+              </Pagination>
+            </Col>
+            <Col md={6} className="text-end pb-4 px-4">
+              <span>{currentBooksByPage} de {total_books}</span>
+            </Col>
+          </Row>
+        </>
+      )}
+      {loading && <div style={{height: '400px'}}><SpinnerComponent /></div>}
     </Container>
   );
 }

@@ -1,62 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from '../Card/Card';
+import api from '../../../api';
+import SpinnerComponent from '../../Spinner/SpinnerComponent';
 
 export default function CarouselPopulares() {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('api/library/top_books')
+      .then((response) => {
+        setBooks(response); 
+        setLoading(false);
+      })
+      .catch(error => console.error('Error fetching top books:', error));
+  }, []);
+
+  if (loading) {
+    return <SpinnerComponent />;
+  }
+
+  const groupedBooks = [];
+  for (let i = 0; i < books.length; i += 3) {
+    groupedBooks.push(books.slice(i, i + 3));
+  }
+
   return (
-    <div id="carouselPopulares" className="carousel container" data-bs-ride="carousel">
+    <div id="carouselPopulares" className="carousel slide" data-bs-ride="carousel">
       <div className="carousel-inner">
-        <div className="carousel-item active">
-          <div className="row justify-content-center">
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Cien años de soledad'} subtitle={'Autor: Gabriel García'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'El nombre de la rosa'} subtitle={'Autor: Umberto Eco'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Dune'} subtitle={'Autor: Frank Herbert'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Cien sonetos de amor'} subtitle={'Autor: Pablo Neruda'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-          </div>
-        </div>
-
-        <div className="carousel-item">
-          <div className="row justify-content-center">
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'El señor de los anillos'} subtitle={'Autor: J.R.R. Tolkien'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Orgullo y prejuicio'} subtitle={'Autor: Jane Austen'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Los pilares de la tierra'} subtitle={'Autor: Ken Follett'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Hamlet'} subtitle={'Autor: William Shakespeare'} link={{ href: '#', text: 'Ver más' }} />
+        {groupedBooks.map((group, idx) => (
+          <div className={`carousel-item ${idx === 0 ? 'active' : ''}`} key={idx}>
+            <div className="row justify-content-center">
+              {group.map((book, bookIdx) => (
+                <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={bookIdx}>
+                  <Card
+                    title={book.titulo}
+                    subtitle={`Autor: ${book.autores.join(', ')}`}
+                    link={{ href: `/specificBook/${book.libro_id}`, text: 'Ver más' }}
+                    rating={{
+                      text: 'Guardados',
+                      count: book.cantidad_guardados
+                    }}
+                  />
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-
-        <div className="carousel-item">
-          <div className="row justify-content-center">
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'El resplandor'} subtitle={'Autor: Stephen King'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Sapiens'} subtitle={'Autor: Yuval Noah Harari'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Harry Potter'} subtitle={'Autor: J.K. Rowling'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Entendimiento humano'} subtitle={'Autor: John Locke'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
-
       <a className="carousel-control-prev custom-carousel-control rounded-circle bg-primary text-white" href="#carouselPopulares" role="button" data-bs-slide="prev" title="Anterior" style={{ width: '40px', height: '40px', top: '50%', transform: 'translateY(-50%)', marginLeft: '-50px' }}>
         <span className="carousel-control-prev-icon" aria-hidden="true"></span>
       </a>
