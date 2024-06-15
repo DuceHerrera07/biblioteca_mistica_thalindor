@@ -186,8 +186,10 @@ def get_book(libro_id):
         book = Book.query.get(libro_id)
         if not book:
             return jsonify({'message': 'Libro no encontrado'}), 404
-
+        
         result = book_schema.dump(book)
+        result['autores'] = [author.nombre for author in book.autores]
+        result['generos'] = [genre.descripcion for genre in book.generos]
         return jsonify(result), 200
 
     except ValidationError as err:
