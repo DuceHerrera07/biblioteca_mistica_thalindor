@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Pagination, Form } from 'react-bootstrap';
 import api from '../../api';
 import SpinnerComponent from '../../components/Spinner/SpinnerComponent';
-import { SearchContext } from '../../../Context/SearchContext';
+import { SearchContext } from '../../Context/SearchContext';
 import { NavLink } from 'react-router-dom';
 
 function SearchPage() {

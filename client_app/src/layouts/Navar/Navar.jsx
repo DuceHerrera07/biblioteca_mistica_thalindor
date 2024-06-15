@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { logout } from '../../routes/auth/auth';
 import { useContext } from 'react';
-import { SearchContext } from '../../../Context/SearchContext';
+import { SearchContext } from '../../Context/SearchContext';
 import { useNavigate, useNavigation} from 'react-router-dom';
 
 function Navar() {

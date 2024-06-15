@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Card from '../Card/Card';
 import api from '../../../api';
 import SpinnerComponent from '../../Spinner/SpinnerComponent';
-import { SearchContext } from '../../../../Context/SearchContext';
+import { SearchContext } from '../../../Context/SearchContext';
 
 
 export default function CarouselCategorias() {
