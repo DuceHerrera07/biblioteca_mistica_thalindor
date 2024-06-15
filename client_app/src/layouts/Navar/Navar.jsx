@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import { logout } from '../../routes/auth/auth';
+import { useContext } from 'react';
+import { SearchContext } from '../../../Context/SearchContext';
+import { useNavigate, useNavigation} from 'react-router-dom';
 
 function Navar() {
   const [isNavCollapsed, setIsNavCollapsed] = useState(true);
+  const { searchTerm, updateSearchTerm } = useContext(SearchContext);
+  const navigate = useNavigate();
 
+  const handleSearchChange = (event) => {
+    updateSearchTerm(event.target.value);
+  };
   const handleNavCollapse = () => setIsNavCollapsed(!isNavCollapsed);
 
   const handleLogout = () => {
@@ -29,12 +37,12 @@ function Navar() {
               <a className="nav-link" href="/managePersonalLibrary">Libreria personal</a>
             </li>
           </ul>
-
-          <form className="d-flex">
-            <input className="form-control me-2" type="search" placeholder="Buscar" />
-            <button className="btn btn-secondary my-2 my-sm-0" type="button">Buscar</button>
-          </form>
-
+          { window.location.pathname === '/' && (
+            <form className="d-flex">
+              <input className="form-control me-2" type="search" placeholder="Buscar" value={searchTerm} onChange={(e)=> handleSearchChange(e)}/>
+              <button className="btn btn-secondary my-2 my-sm-0" type="button" onClick={()=>{navigate('/search')}}>Buscar</button>
+            </form>
+          )}
           <button className="btn btn-secondary my-2 my-sm-0 mx-1" type="button" onClick={handleLogout}>
             Logout  
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" className="bi bi-box-arrow-right mx-1" viewBox="0 0 16 16" style={{ transform: 'translateY(-2px)' }}>

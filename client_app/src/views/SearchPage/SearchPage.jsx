@@ -1,22 +1,53 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Pagination, Form } from 'react-bootstrap';
-
-const categories = ['Ficción', 'No Ficción', 'Ciencia', 'Historia'];
-const fakeBooks = Array.from({ length: 150 }).map((_, idx) => ({
-  id: idx + 1,
-  title: `Libro ${idx + 1}`,
-  author: `Autor ${idx + 1}`,
-  image: 'https://via.placeholder.com/250',
-  category: categories[Math.floor(Math.random() * categories.length)],
-  popularity: Math.floor(Math.random() * 100), // Popularidad aleatoria
-}));
-
+import api from '../../api';
+import SpinnerComponent from '../../components/Spinner/SpinnerComponent';
+import { SearchContext } from '../../../Context/SearchContext';
 
 function SearchPage() {
+  // Filtros
+  const { searchTerm, updateSearchTerm} = useContext(SearchContext);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [ordenarPorPopulares, setOrdenarPorPopulares] = useState(false);
+
+  // Peticiones
+  const [books, setBooks] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  // Estados de la paginación
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState('Todos');
-  const [sortOrder, setSortOrder] = useState('default');
-  const booksPerPage = 52;
+  const [totalPages, setTotalPages] = useState(1);
+  const [total_books, setTotalBooks] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const fetchBooks = (page) => {
+    setLoading(true);
+    const data_search_filter = {
+      search: searchTerm,
+      categoria: selectedCategory,
+      ordenar_por_populares: ordenarPorPopulares,
+      page: page,
+    };
+
+    api.get('api/library/genres')
+      .then((response) => {
+        setCategories(response);
+      })
+    api.post('api/library/search_books', data_search_filter)
+      .then((response) => {
+        setBooks(response.books);
+        setTotalPages(response.total_pages);
+        setCurrentPage(response.current_page);
+        setTotalBooks(response.total_books);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchBooks(currentPage);
+  }, [currentPage]);
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
@@ -24,26 +55,19 @@ function SearchPage() {
   };
 
   const handleSortOrderChange = (e) => {
-    setSortOrder(e.target.value);
+    setOrdenarPorPopulares(e.target.value === 'true');
+    setCurrentPage(1);
   };
-
-  const filteredBooks = selectedCategory === 'Todos'
-    ? fakeBooks
-    : fakeBooks.filter(book => book.category === selectedCategory);
-
-  const sortedBooks = sortOrder === 'popularity'
-    ? filteredBooks.sort((a, b) => b.popularity - a.popularity)
-    : filteredBooks;
-
-  const indexOfLastBook = currentPage * booksPerPage;
-  const indexOfFirstBook = indexOfLastBook - booksPerPage;
-  const currentBooks = sortedBooks.slice(indexOfFirstBook, indexOfLastBook);
-
-  const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
 
   const handleClick = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  const handleSearchChange = (e) => {
+    updateSearchTerm(e.target.value);
+  };
+
+  let currentBooksByPage = books.length;
 
   return (
     <Container className="mt-4">
@@ -60,32 +84,49 @@ function SearchPage() {
       <Row className="justify-content-between align-items-center mb-4">
         <Col md={6}>
           <Form.Select aria-label="Filtrar por categoría" onChange={handleCategoryChange}>
-            {categories.map((category, idx) => (
-              <option key={idx} value={category}>{category}</option>
+            <option value="">Todas las categorías</option>
+            {categories.map((cat, idx) => (
+              <option key={idx} value={cat.genero_id}>{cat.descripcion}</option>
             ))}
           </Form.Select>
         </Col>
         <Col md={6} className="text-end">
           <Form.Select aria-label="Ordenar por" onChange={handleSortOrderChange}>
-            <option value="default">Por defecto</option>
-            <option value="popularity">Más populares</option>
+            <option value={false}>Por defecto</option>
+            <option value={true}>Más populares</option>
           </Form.Select>
         </Col>
       </Row>
-      <Row>
-        {currentBooks.map((book) => (
-          <Col key={book.id} md={3} className="mb-4">
-            <Card>
-              <Card.Img variant="top" src={book.image} height={250} width={250} />
-              <Card.Body>
-                <Card.Title>{book.title}</Card.Title>
-                <Card.Text>{book.author}</Card.Text>
-                <Card.Text><small>{book.category}</small></Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
+      <Row className="justify-content-between align-items-center mb-4">
+        <Col md={11}>
+          <Form.Control type="text" placeholder="Buscar titulo" value={searchTerm} onChange={(e) => handleSearchChange(e)} />
+        </Col>
+        <Col md={1} className="text-end">
+          <button className="btn btn-primary" onClick={()=>fetchBooks(1)}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+            </svg>
+          </button>
+        </Col>
       </Row>
+      {loading ? <SpinnerComponent /> : (
+        <Row>
+          {books.map((book, idx) => (
+            <Col key={idx} md={3} className="mb-4">
+              <Card style={{ height: '450px' }}>
+                <Card.Img variant="top" src={'https://via.placeholder.com/250'} height={250} width={250} />
+                <Card.Body>
+                  <Card.Title>{`Título: ${book.titulo}`}</Card.Title>
+                  <Card.Text>{`Autor(es): ${book.autores.join(', ')}`}</Card.Text>
+                  <Card.Text>
+                    <small>{`Género(s): ${book.generos.join(', ')}`}</small>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
       <Row className="justify-content-between align-items-center">
         <Col md={6}>
           <Pagination>
@@ -107,7 +148,7 @@ function SearchPage() {
           </Pagination>
         </Col>
         <Col md={6} className="text-end pb-4 px-4">
-          <span>{currentPage} de {totalPages}</span>
+          <span>{currentBooksByPage} de {total_books}</span>
         </Col>
       </Row>
     </Container>

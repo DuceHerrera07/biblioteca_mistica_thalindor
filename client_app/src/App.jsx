@@ -5,13 +5,16 @@ import SpinnerComponent from './components/Spinner/SpinnerComponent'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './theme/main.scss'
+import { SearchProvider } from '../Context/SearchContext';
 
 function App() {
   return (
     <BrowserRouter>
         <Suspense fallback={<SpinnerComponent/>}>
           <ToastContainer />
+          <SearchProvider>
             <AppRouter/>
+          </SearchProvider>
         </Suspense>
     </BrowserRouter>
   )
