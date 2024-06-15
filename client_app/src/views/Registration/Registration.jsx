@@ -69,9 +69,9 @@ function Registration() {
   };
 
   return (
-    <div className="container mt-5">
+    <div  className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
       <form className="col-md-6 mx-auto">
-        <div className="card p-4">
+        <div className="card p-4 shadow-lg">
           <IconUsuario />
           <h3 className="mt-3 mb-4">Registro</h3>
           <Input

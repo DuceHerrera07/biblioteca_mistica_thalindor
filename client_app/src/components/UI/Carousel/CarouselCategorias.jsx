@@ -1,55 +1,70 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from '../Card/Card';
+import SpinnerComponent from '../../Spinner/SpinnerComponent';
+import api from '../../../api'; 
 
 export default function CarouselCategorias() {
+  const [categorias, setCategorias] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get('api/categorias/top10');
+        setCategorias(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching categorias:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div style={{height: '100vh'}}><SpinnerComponent/></div>;
+  }
   return (
     <div id="carouselCategorias" className="carousel container" data-bs-ride="carousel">
       <div className="carousel-inner">
+        {categorias.map((categoria, index) => (
         <div className="carousel-item active">
           <div className="row justify-content-center">
+          {categoria.libros.map((libro, libroIndex) => (
             <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Ficción'} subtitle={'22 libros'} link={{ href: '#', text: 'Ver más' }} />
+              <Card title={categoria.nombre} subtitle={`${libro.cantidad} libros`} link={{ href: '#', text: 'Ver más' }} />
             </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Misterio'} subtitle={'33 libros'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Ciencia ficción'} subtitle={'43 libros'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Poesía'} subtitle={'17 libros'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
+            ))}
           </div>
         </div>
+        ))}
+        <div className="carousel-item">
+          <div className="row justify-content-center">
+
+            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
+              <Card title={''} subtitle={''} link={{ href: '#', text: 'Ver más' }} />
+            </div>
+            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
+              <Card title={''} subtitle={''} link={{ href: '#', text: 'Ver más' }} />
+            </div>
+            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
+              <Card title={''} subtitle={''} link={{ href: '#', text: 'Ver más' }} />
+            </div>
+            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
+              <Card title={''} subtitle={''} link={{ href: '#', text: 'Ver más' }} />
+            </div>
+
+          </div>
+        </div>
+
         <div className="carousel-item">
           <div className="row justify-content-center">
             <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Fantasía'} subtitle={'86 libros'} link={{ href: '#', text: 'Ver más' }} />
+              <Card title={''} subtitle={''} link={{ href: '#', text: 'Ver más' }} />
             </div>
             <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Romance'} subtitle={'33 libros'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Novela historica'} subtitle={'15 libros'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Teatro'} subtitle={'11 libros'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-          </div>
-        </div>
-        <div className="carousel-item">
-          <div className="row justify-content-center">
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Terror'} subtitle={'14 libros'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'No ficción'} subtitle={'24 libros'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Infantil y Juvenil'} subtitle={'75 libros'} link={{ href: '#', text: 'Ver más' }} />
-            </div>
-            <div className="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
-              <Card title={'Ensayo'} subtitle={'7 libros'} link={{ href: '#', text: 'Ver más' }} />
+              <Card title={''} subtitle={''} link={{ href: '#', text: 'Ver más' }} />
             </div>
           </div>
         </div>
