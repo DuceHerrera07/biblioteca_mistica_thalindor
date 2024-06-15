@@ -118,7 +118,7 @@ function SearchPage() {
       {books.length === 0 && !loading && <div className="alert alert-warning text-black text-center" role="alert">
         No se encontraron libros.
       </div>}
-      {books.length !== 0 && (
+      {books.length !== 0 && !loading && (
         <>
           <Row className="justify-content-between align-items-center">
             <Col md={6}>
