@@ -38,7 +38,7 @@ function Navar() {
             </li>
           </ul>
           { window.location.pathname !== '/search' && (
-            <form className="d-flex">
+            <form className="d-flex" onSubmit={(e) => e.preventDefault()}>
               <input className="form-control me-2" type="search" placeholder="Buscar" value={searchTerm} onChange={(e)=> handleSearchChange(e)}/>
               <button className="btn btn-secondary my-2 my-sm-0" type="button" onClick={()=>{navigate('/search')}}>Buscar</button>
             </form>
