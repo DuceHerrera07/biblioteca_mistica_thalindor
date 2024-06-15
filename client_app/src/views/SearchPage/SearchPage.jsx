@@ -1,22 +1,45 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Pagination } from 'react-bootstrap';
+import { Container, Row, Col, Card, Pagination, Form } from 'react-bootstrap';
 
+const categories = ['Ficción', 'No Ficción', 'Ciencia', 'Historia'];
 const fakeBooks = Array.from({ length: 150 }).map((_, idx) => ({
   id: idx + 1,
   title: `Libro ${idx + 1}`,
   author: `Autor ${idx + 1}`,
   image: 'https://via.placeholder.com/250',
+  category: categories[Math.floor(Math.random() * categories.length)],
+  popularity: Math.floor(Math.random() * 100), // Popularidad aleatoria
 }));
+
 
 function SearchPage() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [sortOrder, setSortOrder] = useState('default');
   const booksPerPage = 52;
+
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleSortOrderChange = (e) => {
+    setSortOrder(e.target.value);
+  };
+
+  const filteredBooks = selectedCategory === 'Todos'
+    ? fakeBooks
+    : fakeBooks.filter(book => book.category === selectedCategory);
+
+  const sortedBooks = sortOrder === 'popularity'
+    ? filteredBooks.sort((a, b) => b.popularity - a.popularity)
+    : filteredBooks;
 
   const indexOfLastBook = currentPage * booksPerPage;
   const indexOfFirstBook = indexOfLastBook - booksPerPage;
-  const currentBooks = fakeBooks.slice(indexOfFirstBook, indexOfLastBook);
+  const currentBooks = sortedBooks.slice(indexOfFirstBook, indexOfLastBook);
 
-  const totalPages = Math.ceil(fakeBooks.length / booksPerPage);
+  const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
 
   const handleClick = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -34,28 +57,19 @@ function SearchPage() {
           </div>
         </Col>
       </Row>
-      <Row className="justify-content-between align-items-center">
+      <Row className="justify-content-between align-items-center mb-4">
         <Col md={6}>
-          <Pagination>
-            <Pagination.Prev
-              onClick={() => handleClick(currentPage > 1 ? currentPage - 1 : 1)}
-            />
-            {Array.from({ length: totalPages }).map((_, idx) => (
-              <Pagination.Item
-                key={idx + 1}
-                active={idx + 1 === currentPage}
-                onClick={() => handleClick(idx + 1)}
-              >
-                {idx + 1}
-              </Pagination.Item>
+          <Form.Select aria-label="Filtrar por categoría" onChange={handleCategoryChange}>
+            {categories.map((category, idx) => (
+              <option key={idx} value={category}>{category}</option>
             ))}
-            <Pagination.Next
-              onClick={() => handleClick(currentPage < totalPages ? currentPage + 1 : totalPages)}
-            />
-          </Pagination>
+          </Form.Select>
         </Col>
-        <Col md={6} className="text-end pb-4 px-4">
-          <span>{currentPage} de {totalPages}</span>
+        <Col md={6} className="text-end">
+          <Form.Select aria-label="Ordenar por" onChange={handleSortOrderChange}>
+            <option value="default">Por defecto</option>
+            <option value="popularity">Más populares</option>
+          </Form.Select>
         </Col>
       </Row>
       <Row>
@@ -66,6 +80,7 @@ function SearchPage() {
               <Card.Body>
                 <Card.Title>{book.title}</Card.Title>
                 <Card.Text>{book.author}</Card.Text>
+                <Card.Text><small>{book.category}</small></Card.Text>
               </Card.Body>
             </Card>
           </Col>
