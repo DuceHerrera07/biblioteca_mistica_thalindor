@@ -10,7 +10,8 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     CORS(app, resources={
         r"/api/*": {"origins": config_class.URL_FRONTEND},
-        r"/health": {"origins": config_class.URL_FRONTEND}
+        r"/health": {"origins": config_class.URL_FRONTEND},
+        r"/api/library/": {"origins": config_class.URL_FRONTEND}
     })
 
     # Inicializar extensiones

@@ -4,10 +4,26 @@ import Descripcion from '../../components/SpecificBook/Descripcion';
 import Generos from '../../components/SpecificBook/Generos';
 import Informacion from '../../components/SpecificBook/Informacion';
 import ButtonAdd from '../../components/SpecificBook/ButtonAdd';
+import { useParams } from 'react-router-dom';
+import api from '../../api';
+import SpinnerComponent from '../../components/Spinner/SpinnerComponent';
+
 
 export default function SpecificBook() {
   const { idlibro } = useParams();
+  const [currentBook, setCurrentBook] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  console.log('parametro', idlibro);
+
+  useEffect(() => {
+    api.get(`api/library/books/${idlibro}`).then((response) => {
+      setCurrentBook(response);
+      setLoading(false);
+    });
+  }, []);
   
+
   const generos = ['Fantasía', 'Aventura', 'Drama'];
   const titulo = 'Dracula';
   const libro = {
@@ -29,6 +45,10 @@ export default function SpecificBook() {
       setBooks([...books, book]);
     }
   };
+
+  if (loading) {
+    return <div><SpinnerComponent/></div>;
+  }
 
   return (
     <div className="container mt-4">
@@ -53,7 +73,7 @@ export default function SpecificBook() {
 
             <div className="col-md-12 mb-2">
               <div className="card bg-transparent border-0">
-                <Descripcion texto={'La novela comienza con Jonathan Harker, un joven abogado londinense comprometido con Wilhemina Murray (Mina), el cual se encuentra en la ciudad de Bistritz como parte de un viaje de negocios, que continuará a través del desfiladero del Borgo hasta el remoto castillo de su cliente, el conde Drácula, en una de las regiones más lejanas de la Rumania de la época, los montes Cárpatos de Transilvania, para cerrar unas ventas con él. En una posada, los aldeanos locales le advierten que, al ser la víspera del Día de San Jorge, las fuerzas del mal tienen completo poder. Tras instarle sin éxito a quedarse, la dueña de la posada le regala a Jonathan un rosario con esperanzas de protegerlo de las influencias malignas. Convirtiéndose durante un breve período de tiempo en huésped del conde, el joven inglés va descubriendo que la personalidad de Drácula es extraña comparada a sus costumbres inglesas: no se refleja en los espejos, no come nunca en su presencia, y hace vida nocturna.'} />
+                <Descripcion texto={currentBook.descripcion} />
               </div>
             </div>
 

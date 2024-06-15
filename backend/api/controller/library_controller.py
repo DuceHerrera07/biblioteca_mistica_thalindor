@@ -173,6 +173,7 @@ def get_book(libro_id):
         {
             "titulo": "Book Title",
             "autores": ["Author 1", "Author 2"],
+            "descripcion": "Book Description",
             "editorial": "Editorial Name",
             "fecha_publicacion": "2023-01-01",
             "isbn": "1234567890123",
