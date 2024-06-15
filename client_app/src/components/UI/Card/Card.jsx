@@ -1,10 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Card = ({ title, subtitle, link, ...more}) => {
+const Card = ({ title, subtitle, link, ...more }) => {
   const navigate = useNavigate();
+
   return (
-    <div className="card shadow-sm" style={{ borderRadius: '5px', overflow: 'hidden' }}>
+    <div className="card shadow-sm" style={{ borderRadius: '5px', overflow: 'hidden', maxWidth: '100%' }}>
       <div className="d-flex justify-content-center">
         <img
           src="https://via.placeholder.com/200"
@@ -18,13 +19,13 @@ const Card = ({ title, subtitle, link, ...more}) => {
           }}
         />
       </div>
-      <div className="card-body" style={{ padding: '15px' }}>
+      <div className="card-body" style={{ padding: '10px' }}>
         <h5 className="card-title" style={{
           fontSize: '1rem',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
-          marginBottom: '10px',
+          marginBottom: '5px',
           fontWeight: 'bold'
         }}>{title}</h5>
         <p className="card-subtitle mb-2 text-muted" style={{
@@ -45,17 +46,18 @@ const Card = ({ title, subtitle, link, ...more}) => {
         )}
         <div className="d-flex justify-content-end">
           <a 
-            onClick={()=>{
+            onClick={() => {
               if (more.onClickSelectedCategory) {
                 more.onClickSelectedCategory();
                 navigate(link.href);
+              } else {
+                navigate(link.href);
               }
-              navigate(link.href);
             }}
             className="btn btn-primary btn-sm"
             style={{
               fontSize: '0.85rem',
-              padding: '5px 10px',
+              padding: '3px 10px',
               borderRadius: '20px'
             }}
           >{link.text}</a>

@@ -32,7 +32,7 @@ export default function CarouselPopulares() {
           <div className={`carousel-item ${idx === 0 ? 'active' : ''}`} key={idx}>
             <div className="row justify-content-center">
               {group.map((book, bookIdx) => (
-                <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={bookIdx}>
+                <div className="col-12 col-sm-4 col-md-4 col-lg-3 mb-4" key={bookIdx}>
                   <Card
                     title={book.titulo}
                     subtitle={`Autor: ${book.autores.join(', ')}`}
@@ -48,10 +48,10 @@ export default function CarouselPopulares() {
           </div>
         ))}
       </div>
-      <a className="carousel-control-prev custom-carousel-control rounded-circle bg-primary text-white" href="#carouselPopulares" role="button" data-bs-slide="prev" title="Anterior" style={{ width: '40px', height: '40px', top: '50%', transform: 'translateY(-50%)', marginLeft: '-50px' }}>
+      <a className="carousel-control-prev custom-carousel-control rounded-circle bg-primary text-white" href="#carouselPopulares" role="button" data-bs-slide="prev" title="Anterior" style={{ width: '40px', height: '40px', top: '50%', transform: 'translateY(-50%)', marginLeft: 'auto' }}>
         <span className="carousel-control-prev-icon" aria-hidden="true"></span>
       </a>
-      <a className="carousel-control-next custom-carousel-control rounded-circle bg-primary text-white" href="#carouselPopulares" role="button" data-bs-slide="next" title="Siguiente" style={{ width: '40px', height: '40px', top: '50%', transform: 'translateY(-50%)', marginRight: '-50px' }}>
+      <a className="carousel-control-next custom-carousel-control rounded-circle bg-primary text-white" href="#carouselPopulares" role="button" data-bs-slide="next" title="Siguiente" style={{ width: '40px', height: '40px', top: '50%', transform: 'translateY(-50%)', marginRight: 'auto' }}>
         <span className="carousel-control-next-icon" aria-hidden="true"></span>
       </a>
     </div>
