@@ -16,7 +16,7 @@ function Navar() {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/';
+    navigate('/login');
   }
 
   return (

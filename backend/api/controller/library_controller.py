@@ -59,7 +59,7 @@ def get_personal_library():
         data = request.get_json()
         search = data.get('search', '')
         page = data.get('page', 1)
-        books_per_page = 50
+        books_per_page = 10
 
         current_user_id = get_jwt_identity()
 
@@ -67,7 +67,7 @@ def get_personal_library():
         
         if search:
             query = query.join(Book).filter(Book.titulo.ilike(f'%{search}%'))
-
+            
         total_books = query.count()
         personal_library = query.paginate(page=page, per_page=books_per_page, error_out=False)
 

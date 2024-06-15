@@ -5,6 +5,7 @@ import ButtonDelete from '../../components/UI/Button/Delete/ButtonDelete';
 import ToggleEye from '../../components/UI/Button/ToggleEye/ToggleEye';
 import api from '../../api';
 import SpinnerComponent from '../../components/Spinner/SpinnerComponent';
+import ButtonAddQuit from '../../components/SpecificBook/ButtonAddQuit';
 
 function ManagePersonalLibrary() {
   const [books, setBooks] = useState([]);
@@ -23,10 +24,10 @@ function ManagePersonalLibrary() {
 
     api.post('api/library/personal_library', data)
       .then((response) => {
-        setBooks(response.data.books);
-        setTotalPages(response.data.total_pages);
-        setTotalBooks(response.data.total_books);
-        setCurrentPage(response.data.current_page);
+        setBooks(response.books);
+        setTotalPages(response.total_pages);
+        setTotalBooks(response.total_books);
+        setCurrentPage(response.current_page);
       })
       .finally(() => {
         setLoading(false);
@@ -35,43 +36,63 @@ function ManagePersonalLibrary() {
 
   useEffect(() => {
     fetchBooks(currentPage);
-  }, [currentPage, searchTerm]);
+  }, [currentPage]);
 
   const handleDelete = (idlibro) => {
-    api.delete(`api/library/personal_library/${idlibro}`)
-      .then(() => {
-        setBooks(books.filter(book => book.idlibro !== idlibro));
-      });
+    api.delete(`api/library/personal_library_remove/${idlibro}`)
+      .then((response) => {
+        if (response.message) {
+          toast.success(response.message);
+        }
+      }).catch((error) => {
+        if (error.message) {
+          toast.warning(error.message);
+        }
+        else if (error.errors) {
+          toast.error(error.errors);
+        }
+        else {
+          toast.error('Ha ocurrido un error');
+        }
+      }
+    ).finally(() => {
+      fetchBooks(currentPage);
+    });
   };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to first page when search term changes
+    setCurrentPage(1); 
   };
 
   const booksByPage = 10;
   let currentBooksByPage = books.length > 0 ? `${(currentPage - 1) * booksByPage + 1} - ${(currentPage * booksByPage) - (booksByPage - books.length)}` : 0;
 
-  if (loading) {
-    return <SpinnerComponent />;
-  }
-
   return (
     <div className="container mt-4">
       <h1 className="mb-4"><strong>Tu lista</strong></h1>
-
-      <div className="mb-4">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Buscar por título"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-      </div>
-      {books.length == 0 && <div className="alert alert-warning text-black text-center" role="alert">
+      <div className='row '>
+        <div className="col-11 mb-4">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Buscar por título"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+        </div>
+        <div className='col-1'>
+          <button className="btn btn-primary col-12" onClick={()=>fetchBooks(1)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+          </button>
+        </div>  
+      </div>    
+      {books.length == 0 && !loading && <div className="alert alert-warning text-black text-center" role="alert">
         No se encontraron libros.
       </div>}
+      {loading && books.length == 0 && <SpinnerComponent />}
       {books.length != 0 && (<div className="table-responsive">
         <table className="table table-hover">
           <thead className="table-dark">
@@ -84,29 +105,29 @@ function ManagePersonalLibrary() {
               <th scope="col">Número de páginas</th>
               <th scope="col">Géneros</th>
               <th scope="col">Idioma</th>
-              <th scope="col">Estado del libro</th>
-              <th scope="col">Eliminar libro</th>
+              <th scope="col" className='text-center'>Estado del libro</th>
+              <th scope="col" className='text-center'>Eliminar libro</th>
             </tr>
           </thead>
 
           <tbody>
-          {books.map(book => (
-              <tr key={book.idlibro}>
-                <td className="text-center">
-                  <Link to={`/specificBook/${book.idlibro}`} className="text-reset text-decoration-none">{book.titulo}</Link>
+          {books.map(b => (
+              <tr key={b.libro.libro_id}>
+                <td className="">
+                  <Link to={`/specificBook/${b.libro.libro_id}`} className="text-reset text-decoration-none">{b.libro.titulo}</Link>
                 </td>
-                <td className="text-center">{book.autores.join(', ')}</td>
-                <td className="text-center">{book.editorial}</td>
-                <td className="text-center">{book.fecha_publicacion}</td>
-                <td className="text-center">{book.isbn}</td>
-                <td className="text-center">{book.numero_paginas}</td>
-                <td className="text-center">{book.generos.join(', ')}</td>
-                <td className="text-center">{book.idioma}</td>
+                <td className="">{b.libro.autores.join(', ')}</td>
+                <td className="">{b.libro.editorial}</td>
+                <td className="">{b.libro.fecha_publicacion}</td>
+                <td className="">{b.libro.isbn}</td>
+                <td className="">{b.libro.numero_paginas}</td>
+                <td className="">{b.libro.generos.join(', ')}</td>
+                <td className="">{b.libro.idioma}</td>
                 <td className="text-center">
-                  <ToggleEye />
+                  <ToggleEye estado_leido={b.estado_leido} libro_id={b.libro.libro_id} fetch_data={() => fetchBooks(currentPage)} />
                 </td>
                 <td className="col-1 text-center">
-                  <ButtonDelete onDelete={() => handleDelete(book.idlibro)} />
+                  <ButtonDelete onDelete={() => handleDelete(b.libro.libro_id)} />
                 </td>
               </tr>
             ))}
