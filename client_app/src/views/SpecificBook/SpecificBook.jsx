@@ -6,6 +6,8 @@ import Informacion from '../../components/SpecificBook/Informacion';
 import ButtonAdd from '../../components/SpecificBook/ButtonAdd';
 
 export default function SpecificBook() {
+  const { idlibro } = useParams();
+  
   const generos = ['Fantasía', 'Aventura', 'Drama'];
   const titulo = 'Dracula';
   const libro = {
